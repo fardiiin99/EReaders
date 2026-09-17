@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>E-Reader Details — EReaders</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="E-reader details, specifications, and list price at EReaders.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Roboto+Slab:wght@700;800&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+  /* ---------- Product details page — store layout ---------- */
+  .pdp {
+    --cond: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+    --ink: #1B1B1B;
+    --muted: #6B6B6B;
+    --line: #E3E3E3;
+    --red: #D0342C;
+    --soft: 0 2px 10px rgba(0, 0, 0, 0.06);
+    padding: 14px var(--safe-r) 0 var(--safe-l);
+    font-family: var(--cond);
+    color: var(--ink);
+  }
+  .pdp .container { max-width: 1280px; }
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 0 12px; font-size: 14px; color: #444; border-bottom: 1px solid var(--line); }
+  .crumbs a { color: #444; text-decoration: none; }
+  .crumbs a:hover { color: var(--red); }
+  .crumbs svg { width: 14px; height: 14px; }
+  .crumbs [aria-current] { margin-left: 8px; color: #222; }
+
+  .pdp-layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 14px; align-items: start; margin-top: 10px; }
+  .card-w { background: #FFFFFF; border-radius: 4px; box-shadow: var(--soft); }
+
+  /* Sidebar */
+  .side { padding: 12px 8px; }
+  .side h2 { margin: 6px 0 12px; font: 700 20px/1.2 var(--cond); text-align: center; color: var(--ink); }
+  .side h2 + ul { margin-bottom: 18px; }
+  .side ul { display: grid; gap: 10px; }
+  .side-item a { display: grid; grid-template-columns: 70px 1fr; gap: 14px; align-items: center; min-height: 86px; padding: 10px 12px; background: #FFF; border-radius: 4px; box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08); text-decoration: none; color: var(--ink); transition: box-shadow 0.2s ease; }
+  .side-item a:hover, .side-item a:focus-visible { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14); }
+  .side-item img { width: 56px; height: 56px; margin: 0 auto; object-fit: contain; }
+  .side-item strong { display: block; font: 400 16px/1.35 var(--cond); }
+  .side-item span { display: block; margin-top: 6px; font: 500 17px/1 var(--cond); color: var(--red); }
+  .side-empty { padding: 10px; font-size: 15px; color: var(--muted); text-align: center; }
+
+  /* Product box */
+  .product { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 26px; padding: 22px 22px 26px; }
+  .gallery { position: relative; min-width: 0; padding: 18px 20px 0; }
+  .g-tag { position: absolute; left: 20px; top: 18px; font: 500 14px/1 var(--cond); letter-spacing: 0.06em; text-transform: uppercase; color: #222; }
+  .g-badge { position: absolute; right: 20px; top: 12px; padding: 5px 8px; border-radius: 3px; font: 600 12px/1 var(--cond); text-transform: uppercase; color: #FFF; background: var(--red); }
+  .g-main { aspect-ratio: 1 / 1; display: grid; place-items: center; padding: 44px 20px 10px; }
+  .g-main img { width: 76%; height: 76%; object-fit: contain; }
+  .dots { display: flex; justify-content: center; gap: 7px; margin: 12px 0 14px; }
+  .dots i { width: 10px; height: 4px; border-radius: 2px; background: #555; }
+  .dots i:first-child { background: var(--red); }
+  .thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .thumbs button { aspect-ratio: 1 / 1; padding: 10px; background: #FFF; border: 1px solid #CFCFCF; border-radius: 2px; cursor: pointer; }
+  .thumbs button[aria-pressed="true"] { border-color: #222; }
+  .thumbs img { width: 100%; height: 100%; object-fit: contain; }
+  .g-note { margin-top: 16px; font-size: 12px; line-height: 1.45; color: #333; text-align: center; }
+
+  .info { display: flex; flex-direction: column; gap: 14px; min-width: 0; padding-top: 6px; }
+  .info h1 { font: 500 clamp(24px, 2.4vw, 30px)/1.2 var(--cond); color: var(--ink); }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pills li { padding: 6px 10px; border: 1px solid #D6D6D6; border-radius: 3px; font: 400 14px/1 var(--cond); color: #333; }
+  .pills .p-status { color: #2266C8; border-color: #BFD3F2; background: #F2F7FF; }
+  .pills .p-status--soon { color: var(--red); border-color: #F1C2BF; background: #FFF5F4; }
+  .pills a { color: #2266C8; }
+  .features h2 { font: 600 18px/1.2 var(--cond); margin-bottom: 6px; }
+  .features ul { display: grid; gap: 3px; padding-left: 18px; list-style: disc; font-size: 16px; color: #333; }
+
+  .opt { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: 4px; }
+  .opt h3 { font: 500 15px/1 var(--cond); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .opt-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opt-list span { display: grid; place-items: center; min-width: 44px; height: 40px; padding: 0 12px; border: 1px solid #CFCFCF; border-radius: 3px; font-size: 15px; }
+  .opt-list span.on { border: 2px solid #222; }
+  .opt-brand { display: grid; place-items: center; width: 110px; height: 56px; padding: 8px; border: 1px solid var(--line); border-radius: 3px; }
+  .opt-brand img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .opt-brand--invert img { filter: invert(1); }
+
+  .views { display: flex; align-items: center; gap: 6px; font: 600 15px/1 var(--cond); }
+  .views svg { width: 16px; height: 16px; }
+
+  .prices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .price-card { padding: 14px 16px; border-radius: 4px; box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1); }
+  .price-card h3 { font: 700 15px/1 var(--cond); text-transform: uppercase; }
+  .price-card strong { display: block; margin-top: 10px; font: 700 22px/1 var(--cond); color: var(--ink); }
+  .price-card strong.tbc { font-size: 18px; color: var(--muted); }
+  .price-card a, .price-card p { display: inline-block; margin-top: 10px; font: 500 13px/1.2 var(--cond); color: #2266C8; text-decoration: none; }
+  .price-card p { color: var(--muted); }
+  .price-card a:hover { text-decoration: underline; }
+
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .btn-black, .btn-plain, .icon-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; font: 500 16px/1 var(--cond); text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
+  .btn-black { padding: 0 20px; border-radius: 4px; color: #FFF; background: #111; }
+  .btn-black:hover { background: #333; }
+  .btn-plain { padding: 0 14px; color: #111; }
+  .btn-plain:hover { color: var(--red); }
+  .btn-plain[aria-pressed="true"] { color: var(--red); }
+  .btn-plain:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-plain svg { width: 16px; height: 16px; }
+  .icon-btn { width: 40px; height: 40px; border-radius: 4px; color: var(--red); box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15); }
+  .icon-btn svg { width: 18px; height: 18px; }
+  .compare-status { font-size: 14px; color: var(--muted); }
+  .compare-status:empty { display: none; }
+  .compare-status a { color: #2266C8; }
+  .disclaimer summary { display: inline-flex; align-items: center; gap: 6px; font: 500 15px/1 var(--cond); text-transform: uppercase; cursor: pointer; list-style: none; }
+  .disclaimer summary::-webkit-details-marker { display: none; }
+  .disclaimer summary::before { content: "+"; font-weight: 700; }
+  .disclaimer[open] summary::before { content: "−"; }
+  .disclaimer p { margin-top: 8px; font-size: 14px; color: var(--muted); }
+
+  /* Tabs */
+  .details { margin-top: 14px; }
+  .tablist { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 18px 0; border-bottom: 1px solid var(--line); }
+  .tablist button { height: 44px; padding: 0 20px; border-radius: 4px 4px 0 0; font: 500 17px/1 var(--cond); color: #333; cursor: pointer; }
+  .tablist button:hover { color: var(--red); }
+  .tablist button[aria-selected="true"] { color: #FFF; background: #111; }
+  .tabpanel { padding: 20px 18px 24px; }
+  .spec-table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  .spec-table .group th { padding: 10px 12px; font: 600 17px/1.2 var(--cond); color: var(--ink); background: #F1F1F1; text-align: left; }
+  .spec-table th[scope="row"], .spec-table td { padding: 9px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid #EEE; }
+  .spec-table th[scope="row"] { width: 32%; font-weight: 400; color: #555; }
+  .desc h2 { font: 700 22px/1.3 var(--cond); margin-bottom: 10px; }
+  .desc > p { font-size: 17px; color: #333; max-width: 900px; }
+  .fit-list { display: grid; gap: 12px; margin-top: 18px; padding-left: 20px; list-style: disc; }
+  .fit-list li { font-size: 17px; color: #333; }
+  .fit-list strong { font-weight: 600; color: var(--ink); }
+
+  .not-found { display: grid; justify-items: start; gap: 14px; margin-top: 20px; padding: 40px; }
+  .not-found h1 { font: 700 clamp(30px, 4vw, 42px)/1.1 var(--cond); }
+  .not-found p { font-size: 17px; color: var(--muted); max-width: 520px; }
+
+  .buy-bar { display: none; }
+
+  @media (max-width: 1000px) {
+    .pdp-layout { grid-template-columns: 1fr; }
+    .pdp-main { order: -1; }
+  }
+  @media (max-width: 760px) {
+    .product { grid-template-columns: 1fr; padding: 14px; }
+    .gallery { padding: 10px 0 0; }
+    .g-tag { left: 0; } .g-badge { right: 0; }
+    .prices { grid-template-columns: 1fr; }
+    .tablist { padding: 10px 10px 0; }
+    .tablist button { padding: 0 14px; font-size: 16px; }
+    .tabpanel { padding: 14px 10px 18px; }
+    .spec-table th[scope="row"] { width: 42%; }
+    .buy-bar {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 300;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      padding: 8px var(--safe-r) calc(8px + env(safe-area-inset-bottom)) var(--safe-l);
+      background: #EFEFEF;
+    }
+    .buy-bar a { display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 4px; font: 500 17px/1 "Barlow Semi Condensed", sans-serif; text-transform: uppercase; text-decoration: none; color: #FFF; }
+    .buy-bar a:first-child { background: #111; }
+    .buy-bar a:last-child { background: #2B3440; }
+    .site-footer { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="bg" aria-hidden="true"><canvas id="stars"></canvas></div>
+
+<div class="page">
+  <header class="site-header">
+    <nav class="nav" id="site-nav" aria-label="Primary">
+      <a class="brand" href="index.html" aria-label="EReaders home">
+        <span class="logo-tile"><img src="assets/logo-icon.png" alt="" width="208" height="176" draggable="false"></span>
+      </a>
+      <div class="nav-menu" id="primary-menu">
+        <ul class="nav-links">
+          <li><a href="products.html" aria-current="true">E-Readers</a></li>
+          <li><a href="index.html#ebooks">Ebooks</a></li>
+          <li><a href="index.html#compare">Compare</a></li>
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="index.html#support">Support</a></li>
+        </ul>
+        <a class="btn-lit btn-lit--nav" href="products.html">Explore Devices</a>
+      </div>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main" class="pdp">
+    <div class="container" id="pdp-root">
+      <!-- Rendered from catalog.js using ?id=<product-id>. -->
+      <noscript><p>Please enable JavaScript to view product details, or <a href="products.html">browse all e-readers</a>.</p></noscript>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="logo-tile logo-tile--full"><img src="assets/logo-full.png" alt="EReaders" width="288" height="300" draggable="false"></span>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="products.html">E-Readers</a>
+        <a href="index.html#ebooks">Ebooks</a>
+        <a href="index.html#compare">Compare</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#support">Support</a>
+      </nav>
+      <p class="footer-note">© <span data-year>2026</span> EReaders. Kindle, BOOX, and Kobo are trademarks of their respective owners. Device artwork on this page is illustrative.</p>
+    </div>
+  </footer>
+</div>
+
+<script src="catalog.js"></script>
+<script src="site.js"></script>
+<script>
+(function () {
+  'use strict';
+  const C = window.EReadersCatalog;
+  const UI = window.EReadersUI;
+  const { $, $$ } = UI;
+  const esc = C.esc;
+  const root = $('#pdp-root');
+
+  const id = new URLSearchParams(location.search).get('id');
+  const p = id && Object.prototype.hasOwnProperty.call(C.byId, id) ? C.byId[id] : null;
+
+  const BRAND_LOGOS = {
+    kindle: { src: 'assets/brands/Amazon_Kindle_2024.svg' },
+    kobo: { src: 'assets/brands/Kobo_logo.svg' },
+    boox: { src: 'assets/brands/BOOX_logo.png', invert: true }
+  };
+  const HOME = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-5h4v5"/></svg>';
+  const PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+  const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const EXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
+
+  function crumbs(parts) {
+    return '<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html" aria-label="Home">' + HOME + '</a>' +
+      parts.map((x) => '<span aria-hidden="true">&gt;</span>' + x).join('') + '</nav>';
+  }
+
+  function renderNotFound() {
+    document.title = 'Product not found — EReaders';
+    root.innerHTML = crumbs(['<a href="products.html">E-Readers</a>']) +
+      '<section class="not-found card-w" aria-labelledby="nf-title">' +
+        '<h1 id="nf-title">We couldn’t find that e-reader.</h1>' +
+        '<p>The link may be out of date, or the device is no longer listed.</p>' +
+        '<a class="btn-black" href="products.html">Browse all e-readers</a>' +
+      '</section>';
+  }
+
+  function fitNotes(p) {
+    const notes = [];
+    const inches = parseFloat(p.screen);
+    if (!isNaN(inches)) {
+      if (inches < 6.5) notes.push(['Pocket-friendly size', 'A ' + p.screen + '-inch screen is easy to carry and hold in one hand.']);
+      else if (inches < 9) notes.push(['Balanced size', 'A ' + p.screen + '-inch screen gives more room per page while staying portable.']);
+      else notes.push(['Large screen', 'A ' + p.screen + '-inch screen suits documents, PDFs, and notes as well as books.']);
+    }
+    if (p.colour === true) notes.push(['Colour display', 'Covers, comics, and highlights can be shown in colour.']);
+    if (p.colour === false) notes.push(['Focused on text', 'A black-and-white E Ink display dedicated to reading.']);
+    if (p.pen === true) notes.push(['Write and annotate', p.form === 'pen' ? 'Designed for writing and markup with a stylus, as well as reading.' : 'Supports a stylus for notes and markup.']);
+    if (p.buttons) notes.push(['Physical page buttons', 'Turn pages with buttons as well as the touchscreen.']);
+    if (p.status === 'coming-soon') notes.push(['Coming soon', 'This device has been announced but isn’t available to buy yet.']);
+    return notes;
+  }
+
+  /* "Same Category" = same device type (pen tablets vs readers) from other brands. */
+  const category = (x) => (x.form === 'pen' ? 'pen' : 'reader');
+  function sideList(list) {
+    if (!list.length) return '<p class="side-empty">No other devices listed yet.</p>';
+    return '<ul>' + list.map((x) =>
+      '<li class="side-item"><a href="' + x.url + '"><img src="' + x.image + '" alt=""><div><strong>' + esc(x.name) + '</strong>' +
+      '<span>' + (C.formatPrice(x) || 'Price coming soon') + '</span></div></a></li>').join('') + '</ul>';
+  }
+
+  function compareStatus(compare) {
+    const inCompare = compare.includes(p.id);
+    if (inCompare && compare.length >= 2) return 'Added. <a href="products.html?compare=1">View comparison (' + compare.length + ')</a>';
+    if (inCompare) return 'Added. Choose one more device to compare. <a href="products.html">Browse e-readers</a>';
+    if (compare.length >= C.MAX_COMPARE) return 'Your compare list is full. <a href="products.html?compare=1">View comparison</a>';
+    return '';
+  }
+
+  function compareBtnHTML(compare) {
+    const on = compare.includes(p.id);
+    const full = !on && compare.length >= C.MAX_COMPARE;
+    return '<button class="btn-plain" type="button" data-compare aria-pressed="' + on + '"' +
+      (full ? ' disabled title="You can compare up to ' + C.MAX_COMPARE + ' devices"' : '') + '>' +
+      (on ? CHECK : PLUS) + '<span>' + (on ? 'Comparing' : 'Compare') + '</span></button>';
+  }
+
+  function specRows() {
+    const groups = [
+      ['General', [['Brand', esc(p.brandName)], ['Product Model', esc(p.name)], ['Availability', C.statusLabel(p)]]],
+      ['Display', [['Screen Size', p.screen ? esc(p.screen) + '"' : null], ['Display Type', C.displayLabel(p)]]],
+      ['Main Features', [['Pen Support', C.yesNo(p.pen)], ['Page-turn Buttons', C.yesNo(p.buttons)]]],
+      ['Price', [['List Price', C.formatPrice(p) ? C.formatPrice(p) + ' (USD)' : 'Coming soon']]]
+    ];
+    return groups.map((g) => [g[0], g[1].filter((r) => r[1])]).filter((g) => g[1].length).map((g) =>
+      '<tbody><tr class="group"><th colspan="2" scope="colgroup">' + g[0] + '</th></tr>' +
+        g[1].map((r) => '<tr><th scope="row">' + r[0] + '</th><td>' + r[1] + '</td></tr>').join('') +
+      '</tbody>').join('');
+  }
+
+  function render() {
+    const compare = C.loadCompare();
+    const brandUrl = 'products.html#brand=' + p.brand;
+    const price = C.formatPrice(p);
+    const soon = p.status === 'coming-soon';
+    const images = Array.isArray(p.images) && p.images.length ? p.images : [p.image];
+    const features = C.specChips(p);
+    const logo = BRAND_LOGOS[p.brand];
+    const model = p.name.replace(p.brandName, '').trim() || p.name;
+    const sameCat = C.PRODUCTS.filter((x) => x.id !== p.id && x.brand !== p.brand && category(x) === category(p)).slice(0, 4);
+    const sameBrand = C.PRODUCTS.filter((x) => x.id !== p.id && x.brand === p.brand).slice(0, 4);
+    const storeLink = (label, cls) => '<a class="' + cls + '" href="' + p.store + '" target="_blank" rel="noopener noreferrer">' + label + '<span class="visually-hidden"> (opens in a new tab)</span></a>';
+
+    root.innerHTML =
+      crumbs(['<a href="products.html">E-Readers</a>', '<a href="' + brandUrl + '">' + esc(p.brandName) + '</a>', '<span aria-current="page">' + esc(p.name) + '</span>']) +
+
+      '<div class="pdp-layout">' +
+        '<aside class="card-w side" aria-label="More devices">' +
+          '<h2>Same Category</h2>' + sideList(sameCat) +
+          '<h2>Same Brand</h2>' + sideList(sameBrand) +
+        '</aside>' +
+
+        '<div class="pdp-main">' +
+          '<article class="card-w product">' +
+            '<div class="gallery">' +
+              '<span class="g-tag">' + (soon ? 'Pre order' : 'In stock') + '</span>' +
+              (p.colour ? '<span class="g-badge">Colour E Ink</span>' : '') +
+              '<div class="g-main"><img id="main-img" src="' + images[0] + '" alt="' + esc(p.alt) + '"></div>' +
+              '<div class="dots" aria-hidden="true">' + images.map(() => '<i></i>').join('') + '</div>' +
+              (images.length > 1
+                ? '<div class="thumbs" role="group" aria-label="Product images">' + images.map((src, i) =>
+                    '<button type="button" data-img="' + i + '" aria-pressed="' + (i === 0) + '" aria-label="Show image ' + (i + 1) + '"><img src="' + src + '" alt=""></button>').join('') + '</div>'
+                : '') +
+              '<p class="g-note">N.B. ' + (p.images ? 'Image may differ from the actual product’s layout, colour, size, and dimensions.' : 'This is an illustration, not a photo of the product.') + '</p>' +
+            '</div>' +
+
+            '<div class="info">' +
+              '<h1>' + esc(p.name) + '</h1>' +
+              '<ul class="pills" aria-label="Product summary">' +
+                '<li class="p-status' + (soon ? ' p-status--soon' : '') + '">' + C.statusLabel(p) + '</li>' +
+                '<li>Brand: <a href="' + brandUrl + '">' + esc(p.brandName) + '</a></li>' +
+                '<li>Model : ' + esc(model) + '</li>' +
+              '</ul>' +
+              (features.length ? '<div class="features"><h2>Features</h2><ul>' + features.map((f) => '<li>' + esc(f) + '</li>').join('') + '</ul></div>' : '') +
+              '<div class="opt">' +
+                '<div><h3>Display</h3><div class="opt-list"><span class="on">' + (p.colour === true ? 'Colour' : p.colour === false ? 'B&amp;W' : 'E Ink') + '</span>' +
+                  (p.screen ? '<span>' + esc(p.screen) + '"</span>' : '') + '</div></div>' +
+                (logo ? '<div class="opt-brand' + (logo.invert ? ' opt-brand--invert' : '') + '"><img src="' + logo.src + '" alt="' + esc(p.brandName) + '"></div>' : '') +
+              '</div>' +
+              '<div class="prices">' +
+                '<div class="price-card"><h3>List price</h3>' +
+                  (price ? '<strong>' + price + '</strong><p>Manufacturer price (USD)</p>' : '<strong class="tbc">Coming soon</strong>') +
+                '</div>' +
+                '<div class="price-card"><h3>Where to buy</h3><strong>' + esc(p.brandName) + ' store</strong>' +
+                  storeLink('+ Check retailer prices', '') +
+                '</div>' +
+              '</div>' +
+              '<div class="actions" id="actions">' +
+                storeLink('Buy now', 'btn-black') + compareBtnHTML(compare) +
+              '</div>' +
+              '<p class="compare-status" id="compare-status" aria-live="polite">' + compareStatus(compare) + '</p>' +
+              '<details class="disclaimer"><summary>Disclaimer</summary><p>Retailer prices and availability may differ from the list price shown. Check the brand’s store for current pricing before buying.</p></details>' +
+            '</div>' +
+          '</article>' +
+
+          '<section class="card-w details" aria-label="Product information">' +
+            '<div class="tablist" role="tablist" aria-label="Product information">' +
+              '<button type="button" role="tab" id="tab-spec" aria-controls="panel-spec" aria-selected="true">Specification</button>' +
+              '<button type="button" role="tab" id="tab-desc" aria-controls="panel-desc" aria-selected="false" tabindex="-1">Description</button>' +
+            '</div>' +
+            '<div class="tabpanel" role="tabpanel" id="panel-spec" aria-labelledby="tab-spec" tabindex="0"><table class="spec-table">' + specRows() + '</table></div>' +
+            '<div class="tabpanel desc" role="tabpanel" id="panel-desc" aria-labelledby="tab-desc" tabindex="0" hidden>' +
+              '<h2>' + esc(p.name) + '</h2><p>' + esc(p.blurb) + '</p>' +
+              '<ul class="fit-list">' + fitNotes(p).map((n) => '<li><strong>' + n[0] + '</strong> — ' + esc(n[1]) + '</li>').join('') + '</ul>' +
+            '</div>' +
+          '</section>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="buy-bar">' + storeLink('Buy now', '') + '<a href="products.html">All e-readers</a></div>';
+  }
+
+  function updateCompare(focus) {
+    const compare = C.loadCompare();
+    $('#actions [data-compare]').outerHTML = compareBtnHTML(compare);
+    $('#compare-status').innerHTML = compareStatus(compare);
+    if (focus) $('#actions [data-compare]').focus();
+  }
+
+  function selectTab(tab, focus) {
+    $$('[role="tab"]', root).forEach((t) => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      $('#' + t.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (focus) tab.focus();
+  }
+
+  if (!p) { renderNotFound(); return; }
+
+  document.title = p.name + ' — EReaders';
+  const meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute('content', p.name + ' by ' + p.brandName + '. ' + p.blurb + ' Specifications and list price at EReaders.');
+  render();
+
+  root.addEventListener('click', function (e) {
+    const cmp = e.target.closest('[data-compare]');
+    if (cmp && !cmp.disabled) {
+      const ids = C.loadCompare();
+      const i = ids.indexOf(p.id);
+      if (i >= 0) ids.splice(i, 1);
+      else if (ids.length < C.MAX_COMPARE) ids.push(p.id);
+      C.saveCompare(ids);
+      updateCompare(true);
+      return;
+    }
+    const tab = e.target.closest('[role="tab"]');
+    if (tab) { selectTab(tab, false); return; }
+    const thumb = e.target.closest('[data-img]');
+    if (thumb) {
+      $('#main-img').src = p.images[+thumb.dataset.img];
+      $$('[data-img]', root).forEach((b) => b.setAttribute('aria-pressed', String(b === thumb)));
+    }
+  });
+  root.addEventListener('keydown', function (e) {
+    const tab = e.target.closest('[role="tab"]');
+    if (!tab || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return;
+    const tabs = $$('[role="tab"]', root);
+    const next = tabs[(tabs.indexOf(tab) + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+    e.preventDefault();
+    selectTab(next, true);
+  });
+  window.addEventListener('storage', function (e) { if (e.key === 'ereaders-compare') updateCompare(false); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) updateCompare(false); });
+})();
+</script>
+</body>
+</html>

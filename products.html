@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shop E-Readers — EReaders</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Browse Kindle, Kobo, and BOOX e-readers at EReaders. Filter by brand, screen, and pen support, and compare devices side by side.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Slab:wght@700;800&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+  /* ---------- Shop page ---------- */
+  .intro { padding: clamp(28px, 5vw, 56px) var(--safe-r) 0 var(--safe-l); }
+  .page-title { margin-top: 18px; font: 800 clamp(32px, 5vw, 56px)/1.05 var(--serif); letter-spacing: -0.015em; text-wrap: balance; }
+  .page-title span { color: var(--gold-light); }
+  .page-lead { margin-top: 14px; max-width: 620px; font-size: clamp(15px, 1.6vw, 17px); color: var(--text-muted); }
+
+  .shop { padding: 32px var(--safe-r) 0 var(--safe-l); }
+  .toolbar {
+    display: grid; gap: 14px;
+    padding: 16px; border-radius: 20px;
+    background: linear-gradient(180deg, rgba(23, 40, 62, 0.72) 0%, rgba(16, 28, 45, 0.72) 100%);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+  .toolbar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+  .chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    min-height: 40px; padding: 0 14px; border-radius: 999px;
+    font: 500 13.5px/1 var(--sans); color: var(--text-muted);
+    box-shadow: inset 0 0 0 1px var(--border);
+    transition: color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer; user-select: none;
+  }
+  .chip:hover { color: var(--ivory); box-shadow: inset 0 0 0 1px rgba(230, 206, 160, 0.34); }
+  .chip[aria-pressed="true"], .chip:has(input:checked) { color: var(--ivory); background: rgba(186, 148, 75, 0.16); box-shadow: inset 0 0 0 1px rgba(186, 148, 75, 0.6); }
+  .chip input { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
+  .chip input:focus-visible { outline: none; }
+  .chip:has(input:focus-visible) { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+  .toolbar-label { font-size: 12.5px; font-weight: 500; color: var(--text-muted); margin-right: 2px; }
+  .divider { width: 1px; height: 28px; background: var(--border); }
+  .search { position: relative; flex: 1 1 260px; }
+  .search svg { position: absolute; left: 14px; top: 50%; translate: 0 -50%; width: 16px; height: 16px; color: var(--text-muted); pointer-events: none; }
+  .search input {
+    width: 100%; height: 44px; padding: 0 14px 0 40px; border: 0; border-radius: 12px;
+    background: rgba(8, 15, 25, 0.55); box-shadow: inset 0 0 0 1px var(--border); font-size: 14px;
+  }
+  .search input::placeholder { color: rgba(183, 189, 199, 0.75); }
+  .search input:hover { box-shadow: inset 0 0 0 1px rgba(230, 206, 160, 0.3); }
+  .search input:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 2px; }
+  .sort { display: inline-flex; align-items: center; gap: 10px; }
+  .sort select {
+    height: 44px; padding: 0 38px 0 14px; border: 0; border-radius: 12px;
+    background: rgba(8, 15, 25, 0.55) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23E6CEA0' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+    box-shadow: inset 0 0 0 1px var(--border); font-size: 14px; appearance: none; cursor: pointer;
+  }
+  .sort select:hover { box-shadow: inset 0 0 0 1px rgba(230, 206, 160, 0.3); }
+  .sort select option { background: var(--navy-deep); color: var(--ivory); }
+
+  .results-bar { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin: 26px 0 16px; }
+  .results-count { font: 700 20px/1.2 var(--serif); }
+  .results-note { font-size: 13px; color: var(--text-muted); }
+  .empty { display: grid; justify-items: center; gap: 12px; padding: 64px 20px; text-align: center; border-radius: 20px; box-shadow: inset 0 0 0 1px var(--border); }
+  .empty h2 { font: 700 24px/1.2 var(--serif); }
+  .empty p { color: var(--text-muted); max-width: 420px; }
+  .fine-print { margin-top: 28px; font-size: 13px; color: rgba(183, 189, 199, 0.8); max-width: 760px; }
+
+  @media (max-width: 700px) {
+    .toolbar { padding: 12px; border-radius: 18px; }
+    .toolbar-row--scroll { flex-wrap: nowrap; overflow-x: auto; margin: 0 -12px; padding: 4px 12px; scrollbar-width: none; }
+    .toolbar-row--scroll::-webkit-scrollbar { display: none; }
+    .toolbar-row--scroll > *, .toolbar-row--scroll .chips { flex: none; flex-wrap: nowrap; }
+    .search { flex-basis: 100%; }
+    .divider { display: none; }
+  }
+  /* Light theme */
+  .page-title span { color: var(--gold-ink); }
+  .toolbar { background: #F7F5F0; }
+  .chip:hover { color: var(--navy); box-shadow: inset 0 0 0 1px rgba(23, 40, 62, 0.3); }
+  .chip[aria-pressed="true"], .chip:has(input:checked) { color: var(--navy); background: rgba(186, 148, 75, 0.16); }
+  .search input, .sort select { background-color: #FFFFFF; color: var(--navy); }
+  .search input::placeholder { color: #8A94A3; }
+  .sort select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2317283E' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); }
+  .sort select option { background: #FFFFFF; color: var(--navy); }
+  .fine-print { color: var(--text-muted); }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#results">Skip to products</a>
+
+<div class="bg" aria-hidden="true"><canvas id="stars"></canvas></div>
+
+<div class="page">
+  <header class="site-header">
+    <nav class="nav" id="site-nav" aria-label="Primary">
+      <a class="brand" href="index.html" aria-label="EReaders home">
+        <span class="logo-tile"><img src="assets/logo-icon.png" alt="" width="208" height="176" draggable="false"></span>
+      </a>
+      <div class="nav-menu" id="primary-menu">
+        <ul class="nav-links">
+          <li><a href="products.html" aria-current="page">E-Readers</a></li>
+          <li><a href="index.html#ebooks">Ebooks</a></li>
+          <li><a href="index.html#compare">Compare</a></li>
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="index.html#support">Support</a></li>
+        </ul>
+        <a class="btn-lit btn-lit--nav" href="products.html">Explore Devices</a>
+      </div>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">E-Readers</span></nav>
+        <h1 class="page-title" id="page-title">Find your <span>reading companion.</span></h1>
+        <p class="page-lead">Browse e-readers from Kindle, Kobo, and BOOX. Filter by what matters to you, open any device for the full details, and compare up to three side by side.</p>
+      </div>
+    </section>
+
+    <section class="shop" aria-label="E-readers">
+      <div class="container">
+        <div class="toolbar" role="search" aria-label="Filter e-readers">
+          <div class="toolbar-row">
+            <label class="search">
+              <span class="visually-hidden">Search e-readers</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <input id="search" type="search" placeholder="Search by name or brand" autocomplete="off">
+            </label>
+            <label class="sort">
+              <span class="toolbar-label">Sort</span>
+              <select id="sort">
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+                <option value="screen-asc">Screen: small to large</option>
+                <option value="name">Name: A–Z</option>
+              </select>
+            </label>
+          </div>
+          <div class="toolbar-row toolbar-row--scroll">
+            <div class="chips" role="group" aria-label="Brand">
+              <span class="toolbar-label" aria-hidden="true">Brand</span>
+              <button class="chip" type="button" data-brand="all" aria-pressed="true">All brands</button>
+              <button class="chip" type="button" data-brand="kindle" aria-pressed="false">Kindle</button>
+              <button class="chip" type="button" data-brand="kobo" aria-pressed="false">Kobo</button>
+              <button class="chip" type="button" data-brand="boox" aria-pressed="false">BOOX</button>
+            </div>
+            <span class="divider" aria-hidden="true"></span>
+            <div class="chips" role="group" aria-label="Features">
+              <label class="chip"><input type="checkbox" data-feature="colour"> Colour screen</label>
+              <label class="chip"><input type="checkbox" data-feature="pen"> Pen support</label>
+              <label class="chip"><input type="checkbox" data-feature="buttons"> Page buttons</label>
+              <label class="chip"><input type="checkbox" data-feature="available"> Available now</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-bar">
+          <h2 class="results-count" id="results-count" aria-live="polite">E-readers</h2>
+          <p class="results-note">Prices are manufacturer list prices in USD and may vary by retailer.</p>
+        </div>
+
+        <ul class="grid" id="results" tabindex="-1" aria-labelledby="results-count"></ul>
+
+        <div class="empty" id="empty" hidden>
+          <h2>No matches yet</h2>
+          <p>Try removing a filter or searching for a different name or brand.</p>
+          <button class="btn-lit" type="button" id="reset-filters">Reset filters</button>
+        </div>
+
+        <p class="fine-print">Device images are illustrations, not product photographs. Specifications shown are a short summary; check the brand's store for full details before buying.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="logo-tile logo-tile--full"><img src="assets/logo-full.png" alt="EReaders" width="288" height="300" draggable="false"></span>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="products.html">E-Readers</a>
+        <a href="index.html#ebooks">Ebooks</a>
+        <a href="index.html#compare">Compare</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#support">Support</a>
+      </nav>
+      <p class="footer-note">© <span data-year>2026</span> EReaders. Kindle, BOOX, and Kobo are trademarks of their respective owners. Device artwork on this page is illustrative.</p>
+    </div>
+  </footer>
+</div>
+
+<div class="compare-tray" id="compare-tray" role="region" aria-label="Compare devices" hidden>
+  <span class="compare-tray-label">Compare up to 3</span>
+  <ul class="compare-items" id="compare-items"></ul>
+  <button class="btn-ghost" type="button" id="compare-clear">Clear</button>
+  <button class="btn-lit" type="button" id="compare-open">Compare</button>
+</div>
+
+<dialog class="dialog" id="compare-dialog" aria-labelledby="compare-title">
+  <button class="dialog-close" type="button" data-close aria-label="Close comparison">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="compare-inner">
+    <p class="eyebrow">Compare</p>
+    <h2 class="compare-title" id="compare-title">Side by side</h2>
+    <div class="table-wrap" id="compare-body" tabindex="0" role="region" aria-label="Comparison table"></div>
+    <p class="dialog-note" style="margin-top:14px">List prices in USD. Check each brand's store for full specifications.</p>
+  </div>
+</dialog>
+
+<script src="catalog.js"></script>
+<script src="site.js"></script>
+<script>
+(function () {
+  'use strict';
+  const C = window.EReadersCatalog;
+  const UI = window.EReadersUI;
+  const { $, $$ } = UI;
+
+  const DEFAULTS = { brand: 'all', colour: false, pen: false, buttons: false, available: false, query: '', sort: 'featured' };
+  const state = Object.assign({}, DEFAULTS);
+  let compare = C.loadCompare();
+
+  const grid = $('#results');
+  const searchEl = $('#search');
+  const sortEl = $('#sort');
+
+  function filtered() {
+    const terms = state.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    let list = C.PRODUCTS.filter(function (p) {
+      if (state.brand !== 'all' && p.brand !== state.brand) return false;
+      if (state.colour && p.colour !== true) return false;
+      if (state.pen && p.pen !== true) return false;
+      if (state.buttons && !p.buttons) return false;
+      if (state.available && p.status !== 'available') return false;
+      if (terms.length && !terms.every((t) => p.search.includes(t))) return false;
+      return true;
+    });
+    // Items without a price (or screen) always sort last.
+    const num = (v, dir) => (typeof v === 'number' && !isNaN(v) ? dir * v : Infinity);
+    const by = {
+      'price-asc': (a, b) => num(a.price, 1) - num(b.price, 1),
+      'price-desc': (a, b) => num(a.price, -1) - num(b.price, -1),
+      'screen-asc': (a, b) => num(parseFloat(a.screen), 1) - num(parseFloat(b.screen), 1),
+      name: (a, b) => a.name.localeCompare(b.name)
+    }[state.sort];
+    if (by) list = list.slice().sort((a, b) => by(a, b) || a.order - b.order);
+    return list;
+  }
+
+  function render() {
+    const list = filtered();
+    grid.innerHTML = list.map((p) => UI.cardHTML(p, compare)).join('');
+    $('#empty').hidden = list.length > 0;
+    grid.hidden = list.length === 0;
+    $('#results-count').textContent = list.length === 1 ? '1 e-reader' : list.length + ' e-readers';
+    $$('[data-brand]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.brand === state.brand)));
+    $$('[data-feature]').forEach((c) => { c.checked = !!state[c.dataset.feature]; });
+    sortEl.value = state.sort;
+    syncHash();
+  }
+
+  /* Shareable brand filter: products.html#brand=kobo */
+  function syncHash() {
+    const hash = state.brand !== 'all' ? '#brand=' + state.brand : '';
+    if (hash !== location.hash) history.replaceState(null, '', hash || location.pathname + location.search);
+  }
+  function readHash() {
+    const m = /^#brand=(\w+)$/i.exec(location.hash);
+    state.brand = m && C.BRANDS[m[1].toLowerCase()] ? m[1].toLowerCase() : 'all';
+  }
+
+  $$('[data-brand]').forEach((b) => b.addEventListener('click', function () { state.brand = b.dataset.brand; render(); }));
+  $$('[data-feature]').forEach((c) => c.addEventListener('change', function () { state[c.dataset.feature] = c.checked; render(); }));
+  let timer = 0;
+  searchEl.addEventListener('input', function () {
+    clearTimeout(timer);
+    timer = setTimeout(function () { state.query = searchEl.value; render(); }, 120);
+  });
+  sortEl.addEventListener('change', function () { state.sort = sortEl.value; render(); });
+  $('#reset-filters').addEventListener('click', function () {
+    Object.assign(state, DEFAULTS);
+    searchEl.value = '';
+    render();
+    searchEl.focus();
+  });
+  window.addEventListener('hashchange', function () { readHash(); render(); });
+
+  /* ---------- Compare ---------- */
+  const compareDialog = UI.setupDialog($('#compare-dialog'), () => $('#compare-open'));
+
+  function renderTray() {
+    $('#compare-tray').hidden = compare.length === 0;
+    $('#compare-items').innerHTML = compare.map(function (id) {
+      const p = C.byId[id];
+      return '<li>' + C.esc(p.name) + '<button type="button" data-uncompare="' + id + '" aria-label="Remove ' + C.esc(p.name) + ' from compare">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></li>';
+    }).join('');
+    const btn = $('#compare-open');
+    btn.textContent = 'Compare (' + compare.length + ')';
+    btn.disabled = compare.length < 2;
+    btn.title = compare.length < 2 ? 'Choose at least 2 devices' : '';
+  }
+
+  function setCompare(ids) {
+    compare = ids;
+    C.saveCompare(compare);
+    render();
+    renderTray();
+  }
+
+  function toggleCompare(id, source) {
+    const inGrid = !!source && grid.contains(source);   // captured before re-render detaches it
+    const next = compare.slice();
+    const i = next.indexOf(id);
+    if (i >= 0) next.splice(i, 1);
+    else if (next.length < C.MAX_COMPARE) next.push(id);
+    setCompare(next);
+    if (inGrid) { const again = $('#results [data-compare="' + id + '"]'); if (again) again.focus(); }
+  }
+
+  function showCompare(trigger) {
+    const items = compare.map((id) => C.byId[id]);
+    const row = (label, fn) => '<tr><th scope="row">' + label + '</th>' + items.map((p) => '<td>' + (fn(p) || '—') + '</td>').join('') + '</tr>';
+    $('#compare-body').innerHTML =
+      '<table class="compare-table"><thead><tr><td></td>' +
+        items.map((p) => '<th scope="col"><img src="' + p.image + '" alt=""><a href="' + p.url + '">' + C.esc(p.name) + '</a></th>').join('') +
+      '</tr></thead><tbody>' +
+        row('Brand', (p) => C.esc(p.brandName)) +
+        row('List price', (p) => C.formatPrice(p) || 'Coming soon') +
+        row('Screen', (p) => (p.screen ? C.esc(p.screen) + '″' : null)) +
+        row('Display', (p) => C.displayLabel(p)) +
+        row('Pen support', (p) => C.yesNo(p.pen)) +
+        row('Page buttons', (p) => C.yesNo(p.buttons)) +
+        row('Availability', (p) => C.statusLabel(p)) +
+      '</tbody></table>';
+    compareDialog.open(trigger);
+  }
+
+  document.addEventListener('click', function (e) {
+    const cmp = e.target.closest('[data-compare]');
+    if (cmp) { if (!cmp.disabled) toggleCompare(cmp.dataset.compare, cmp); return; }
+    const un = e.target.closest('[data-uncompare]');
+    if (un) {
+      toggleCompare(un.dataset.uncompare, un);
+      const nextBtn = $('#compare-items button');
+      (nextBtn || grid).focus();
+    }
+  });
+  $('#compare-clear').addEventListener('click', function () { setCompare([]); grid.focus(); });
+  $('#compare-open').addEventListener('click', function (e) { if (compare.length >= 2) showCompare(e.currentTarget); });
+
+  // Keep the list in sync if it changes on another page/tab (e.g. product details).
+  window.addEventListener('storage', function (e) { if (e.key === 'ereaders-compare') setCompare(C.loadCompare()); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) setCompare(C.loadCompare()); });
+
+  readHash();
+  render();
+  renderTray();
+  if (/[?&]compare=1\b/.test(location.search) && compare.length >= 2) showCompare($('#compare-open'));
+})();
+</script>
+</body>
+</html>
