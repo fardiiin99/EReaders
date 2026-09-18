@@ -631,6 +631,22 @@
   }
   .badge { background: none !important; box-shadow: none !important; border: 0 !important; padding: 0 !important; justify-content: center; }
   .badge::before, .badge::after { display: none !important; }
+  /* Fixed menu (replaces the nav CTA) */
+  .fab-menu { position: fixed; top: 24px; right: clamp(16px, 3vw, 40px); z-index: 500; }
+  .fab-toggle { width: 48px; height: 48px; border-radius: 14px; box-shadow: inset 0 0 0 1px rgba(230, 206, 160, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.85), 0 8px 22px rgba(23, 40, 62, 0.22); }
+  .fab-toggle .icon-close { display: none; }
+  .fab-menu.is-open .icon-close { display: block; }
+  .fab-menu.is-open .icon-open { display: none; }
+  .fab-panel { position: absolute; top: calc(100% + 10px); right: 0; width: 260px; display: flex; flex-direction: column; gap: 10px; padding: 10px; border-radius: 18px; background: #FFFFFF; box-shadow: inset 0 0 0 1px var(--border), 0 24px 48px rgba(23, 40, 62, 0.16); }
+  .fab-panel ul { display: grid; gap: 2px; }
+  .fab-panel li a { display: flex; align-items: center; min-height: 44px; padding: 10px 14px; border-radius: 12px; font: 500 15px/1.2 var(--sans); color: var(--navy); text-decoration: none; }
+  .fab-panel li a:hover, .fab-panel li a:focus-visible { background: rgba(23, 40, 62, 0.06); }
+  .fab-cta { height: 48px; }
+  @media (prefers-reduced-motion: no-preference) { .fab-menu.is-open .fab-panel { animation: menuIn 0.2s ease-out; } }
+  @media (max-width: 1080px) { .nav-menu { display: none !important; } }
+  @media (max-width: 700px) { .fab-menu { top: 14px; right: 16px; } }
+  /* Solid buttons: no gold light bank / highlight gradients */
+  .btn-lit::before, .btn-lit::after { display: none; }
   /* ---------- Light theme overrides ---------- */
   .hero::before { display: none; }
   .hero-title { color: var(--navy); }
@@ -667,15 +683,15 @@
           <li><a href="#about">About</a></li>
           <li><a href="#support">Support</a></li>
         </ul>
-        <a class="btn-lit btn-lit--nav btn-nav" href="products.html">Explore Devices</a>
       </div>
 
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
     </nav>
   </header>
+
+
+    </nav>
+  </header>
+
 
   <main id="main">
     <section class="hero" aria-labelledby="hero-title">
@@ -808,6 +824,24 @@
       <p class="footer-note">© <span data-year>2026</span> EReaders. Kindle, BOOX, and Kobo are trademarks of their respective owners. Device artwork on this page is illustrative.</p>
     </div>
   </footer>
+</div>
+
+<!-- Menu button, fixed top-right so it stays reachable while scrolling -->
+<div class="fab-menu" id="fab-menu">
+  <button class="btn-lit fab-toggle" type="button" aria-expanded="false" aria-controls="fab-panel" aria-label="Open menu">
+    <svg class="icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+    <svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="fab-panel" id="fab-panel" hidden>
+    <ul>
+      <li><a href="products.html">E-Readers</a></li>
+      <li><a href="#ebooks">Ebooks</a></li>
+      <li><a href="#compare">Compare</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#support">Support</a></li>
+    </ul>
+    <a class="btn-lit fab-cta" href="products.html">Explore Devices</a>
+  </div>
 </div>
 
 <script>
@@ -1080,13 +1114,13 @@
     /* =====================================================================
        Mobile / tablet menu — one shared set of nav nodes.
        ===================================================================== */
-    const nav = document.getElementById('site-nav');
-    const toggle = nav.querySelector('.menu-toggle');
-    const menu = document.getElementById('primary-menu');
-    const desktopMQ = window.matchMedia('(min-width: 1081px)');
-    const menuOpen = () => nav.classList.contains('is-open');
+    const fab = document.getElementById('fab-menu');
+    const toggle = fab.querySelector('.fab-toggle');
+    const menu = document.getElementById('fab-panel');
+    const menuOpen = () => fab.classList.contains('is-open');
     function setMenu(open, focusToggle) {
-      nav.classList.toggle('is-open', open);
+      fab.classList.toggle('is-open', open);
+      menu.hidden = !open;
       toggle.setAttribute('aria-expanded', String(open));
       toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       if (open) {
@@ -1098,18 +1132,17 @@
     }
     toggle.addEventListener('click', function () { setMenu(!menuOpen(), menuOpen()); });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && menuOpen()) { e.preventDefault(); setMenu(false, true); }
+      if (e.key === 'Escape' && menuOpen() && !document.querySelector('dialog[open]')) { e.preventDefault(); setMenu(false, true); }
     });
     document.addEventListener('pointerdown', function (e) {
-      if (menuOpen() && !nav.contains(e.target)) setMenu(false, false);
+      if (menuOpen() && !fab.contains(e.target)) setMenu(false, false);
     });
-    nav.addEventListener('focusout', function (e) {
-      if (menuOpen() && e.relatedTarget && !nav.contains(e.relatedTarget)) setMenu(false, false);
+    fab.addEventListener('focusout', function (e) {
+      if (menuOpen() && e.relatedTarget && !fab.contains(e.relatedTarget)) setMenu(false, false);
     });
     menu.addEventListener('click', function (e) {
       if (e.target.closest('a') && menuOpen()) setMenu(false, false);
     });
-    onMQ(desktopMQ, function () { if (menuOpen()) setMenu(false, false); });
 
     /* =====================================================================
        Available Brands — scroll-stacking cards.

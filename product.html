@@ -132,32 +132,21 @@
   .ship-note { margin-top: 14px; font-size: 15px; color: #555; }
 
   /* Tabs */
-  /* Product details — collapsible Description / Specifications */
-  .details { margin-top: 14px; padding: 22px 28px 10px; font-family: var(--sans); color: #000; }
-  .pd-title { font: 700 clamp(26px, 2.6vw, 34px)/1.2 var(--sans); }
-  .pd-sec { margin-top: 18px; border-top: 1px solid #DDD; }
-  .pd-sec + .pd-sec { margin-top: 0; }
-  .pd-sec > summary { display: flex; align-items: center; gap: 14px; padding: 22px 0; cursor: pointer; list-style: none; }
-  .pd-sec > summary::-webkit-details-marker { display: none; }
-  .pd-sec > summary::before { content: ''; flex: none; width: 8px; height: 8px; border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; rotate: -45deg; transition: rotate 0.2s ease; }
-  .pd-sec[open] > summary::before { rotate: 45deg; translate: 0 -3px; }
-  .pd-sec h3 { font: 700 20px/1.2 var(--sans); }
-  .pd-body { padding: 0 0 28px 24px; }
-  .desc > p { max-width: 900px; font-size: 16px; line-height: 1.6; }
-  .fit-list { display: grid; gap: 10px; margin-top: 16px; padding-left: 20px; list-style: disc; }
-  .fit-list li { font-size: 16px; line-height: 1.6; }
-  .fit-list strong { font-weight: 600; }
+  .details { margin-top: 14px; }
+  .tablist { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 18px 0; border-bottom: 1px solid var(--line); }
+  .tablist button { height: 44px; padding: 0 20px; border-radius: 4px 4px 0 0; font: 500 17px/1 var(--cond); color: #333; cursor: pointer; }
+  .tablist button:hover { color: var(--red); }
+  .tablist button[aria-selected="true"] { color: #FFF; background: #111; }
+  .tabpanel { padding: 20px 18px 24px; }
   .spec-table { width: 100%; border-collapse: collapse; font-size: 16px; }
-  .spec-table + .spec-table { margin-top: 26px; }
-  .spec-table caption { padding-bottom: 12px; font-weight: 600; text-align: left; }
-  .spec-table th, .spec-table td { width: 50%; padding: 12px 0; text-align: left; vertical-align: top; font-weight: 400; }
-  .spec-table td { color: #555; }
-  .spec-table tr + tr th, .spec-table tr + tr td { border-top: 1px solid #E5E5E5; }
-  .pd-more { margin-top: 26px; }
-  .more-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 10px; font: 400 16px/1 var(--sans); color: #0A6ACF; cursor: pointer; }
-  .more-btn:hover span { text-decoration: underline; }
-  .more-btn svg { width: 16px; height: 16px; transition: rotate 0.2s ease; }
-  .more-btn[aria-expanded="true"] svg { rotate: 180deg; }
+  .spec-table .group th { padding: 10px 12px; font: 600 17px/1.2 var(--cond); color: var(--ink); background: #F1F1F1; text-align: left; }
+  .spec-table th[scope="row"], .spec-table td { padding: 9px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid #EEE; }
+  .spec-table th[scope="row"] { width: 32%; font-weight: 400; color: #555; }
+  .desc h2 { font: 700 22px/1.3 var(--cond); margin-bottom: 10px; }
+  .desc > p { font-size: 17px; color: #333; max-width: 900px; }
+  .fit-list { display: grid; gap: 12px; margin-top: 18px; padding-left: 20px; list-style: disc; }
+  .fit-list li { font-size: 17px; color: #333; }
+  .fit-list strong { font-weight: 600; color: var(--ink); }
 
   .not-found { display: grid; justify-items: start; gap: 14px; margin-top: 20px; padding: 40px; }
   .not-found h1 { font: 700 clamp(30px, 4vw, 42px)/1.1 var(--cond); }
@@ -172,9 +161,10 @@
     .product { grid-template-columns: 1fr; padding: 14px; }
     .product { gap: 24px; }
     .avail { padding-top: 24px; }
-    .details { padding: 16px 14px 6px; }
-    .pd-body { padding-left: 0; }
-    .spec-table th { padding-right: 12px; }
+    .tablist { padding: 10px 10px 0; }
+    .tablist button { padding: 0 14px; font-size: 16px; }
+    .tabpanel { padding: 14px 10px 18px; }
+    .spec-table th[scope="row"] { width: 42%; }
     .buy-bar {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 300;
       display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
@@ -336,22 +326,18 @@
       (on ? CHECK : PLUS) + '<span>' + (on ? 'In compare list' : 'Compare') + '</span></button>';
   }
 
-  const DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>';
-  const moreBtn = (id) => '<button type="button" class="more-btn" data-more="' + id + '" aria-expanded="false" aria-controls="' + id + '">' + DOWN + '<span>Show more</span></button>';
-
-  /* Key specifications always visible; the other groups sit behind "Show more". */
-  function specHTML() {
-    const storage = p.options && p.options.Storage ? p.options.Storage.map((o) => esc(o.label)).join(' / ') : null;
+  function specRows() {
     const groups = [
-      ['Key specifications', [['Display size (inches)', p.screen ? esc(p.screen) + '"' : null], ['Display type', C.displayLabel(p)], ['Storage capacity', storage], ['Pen support', C.yesNo(p.pen)], ['Page-turn buttons', C.yesNo(p.buttons)]]],
-      ['General', [['Brand', esc(p.brandName)], ['Product model', esc(p.name)], ['Availability', C.statusLabel(p)]]],
-      ['Price', [['List price', C.formatPrice(p) ? C.formatPrice(p) + ' (USD)' : 'Coming soon']]]
+      ['General', [['Brand', esc(p.brandName)], ['Product Model', esc(p.name)], ['Availability', C.statusLabel(p)]]],
+      ['Display', [['Screen Size', p.screen ? esc(p.screen) + '"' : null], ['Display Type', C.displayLabel(p)]]],
+      ['Memory', [['Storage', p.options && p.options.Storage ? p.options.Storage.map((o) => esc(o.label)).join(' / ') : null]]],
+      ['Main Features', [['Pen Support', C.yesNo(p.pen)], ['Page-turn Buttons', C.yesNo(p.buttons)]]],
+      ['Price', [['List Price', C.formatPrice(p) ? C.formatPrice(p) + ' (USD)' : 'Coming soon']]]
     ];
-    const tables = groups.map((g) => [g[0], g[1].filter((r) => r[1])]).filter((g) => g[1].length).map((g) =>
-      '<table class="spec-table"><caption>' + g[0] + '</caption><tbody>' +
+    return groups.map((g) => [g[0], g[1].filter((r) => r[1])]).filter((g) => g[1].length).map((g) =>
+      '<tbody><tr class="group"><th colspan="2" scope="colgroup">' + g[0] + '</th></tr>' +
         g[1].map((r) => '<tr><th scope="row">' + r[0] + '</th><td>' + r[1] + '</td></tr>').join('') +
-      '</tbody></table>');
-    return tables[0] + (tables.length > 1 ? '<div class="pd-more" id="more-spec" hidden>' + tables.slice(1).join('') + '</div>' + moreBtn('more-spec') : '');
+      '</tbody>').join('');
   }
 
   const CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
@@ -433,16 +419,16 @@
             '</div>' +
           '</article>' +
 
-          '<section class="card-w details" aria-labelledby="pd-title">' +
-            '<h2 class="pd-title" id="pd-title">Product details</h2>' +
-            '<details class="pd-sec" open><summary><h3>Description</h3></summary><div class="pd-body desc">' +
-              '<p>' + esc(p.blurb) + '</p>' +
-              '<div class="pd-more" id="more-desc" hidden><ul class="fit-list">' + fitNotes(p).map((n) => '<li><strong>' + n[0] + '</strong> — ' + esc(n[1]) + '</li>').join('') + '</ul></div>' +
-              moreBtn('more-desc') +
-            '</div></details>' +
-            '<details class="pd-sec" open><summary><h3>Specifications</h3></summary><div class="pd-body">' +
-              specHTML() +
-            '</div></details>' +
+          '<section class="card-w details" aria-label="Product information">' +
+            '<div class="tablist" role="tablist" aria-label="Product information">' +
+              '<button type="button" role="tab" id="tab-spec" aria-controls="panel-spec" aria-selected="true">Specification</button>' +
+              '<button type="button" role="tab" id="tab-desc" aria-controls="panel-desc" aria-selected="false" tabindex="-1">Description</button>' +
+            '</div>' +
+            '<div class="tabpanel" role="tabpanel" id="panel-spec" aria-labelledby="tab-spec" tabindex="0"><table class="spec-table">' + specRows() + '</table></div>' +
+            '<div class="tabpanel desc" role="tabpanel" id="panel-desc" aria-labelledby="tab-desc" tabindex="0" hidden>' +
+              '<h2>' + esc(p.name) + '</h2><p>' + esc(p.blurb) + '</p>' +
+              '<ul class="fit-list">' + fitNotes(p).map((n) => '<li><strong>' + n[0] + '</strong> — ' + esc(n[1]) + '</li>').join('') + '</ul>' +
+            '</div>' +
           '</section>' +
           railHTML('rail-similar', 'Similar Devices', sameCat, 'products.html') +
           railHTML('rail-brand', 'More from ' + esc(p.brandName), sameBrand, brandUrl) +
@@ -459,6 +445,16 @@
     if (focus) $('#actions [data-compare]').focus();
   }
 
+
+  function selectTab(tab, focus) {
+    $$('[role="tab"]', root).forEach((t) => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      $('#' + t.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (focus) tab.focus();
+  }
 
   if (!p) { renderNotFound(); return; }
 
@@ -530,16 +526,18 @@
       if (opt.dataset.price) $('#big-price').textContent = C.money.format(+opt.dataset.price);
       return;
     }
-    const more = e.target.closest('[data-more]');
-    if (more) {
-      const open = more.getAttribute('aria-expanded') !== 'true';
-      $('#' + more.dataset.more).hidden = !open;
-      more.setAttribute('aria-expanded', String(open));
-      more.querySelector('span').textContent = open ? 'Show less' : 'Show more';
-      return;
-    }
+    const tab = e.target.closest('[role="tab"]');
+    if (tab) { selectTab(tab, false); return; }
     const thumb = e.target.closest('[data-img]');
     if (thumb) { goTo(+thumb.dataset.img); restart(); }
+  });
+  root.addEventListener('keydown', function (e) {
+    const tab = e.target.closest('[role="tab"]');
+    if (!tab || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return;
+    const tabs = $$('[role="tab"]', root);
+    const next = tabs[(tabs.indexOf(tab) + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+    e.preventDefault();
+    selectTab(next, true);
   });
   window.addEventListener('storage', function (e) { if (e.key === 'ereaders-compare') updateCompare(false); });
   window.addEventListener('pageshow', function (e) { if (e.persisted) updateCompare(false); });

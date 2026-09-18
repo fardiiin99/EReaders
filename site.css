@@ -358,3 +358,6 @@ ul { list-style: none; }
 .site-footer { background: #F7F5F0; }
 .footer-links a:hover, .footer-links a:focus-visible { color: var(--navy); }
 .footer-note { color: var(--text-muted); }
+
+/* Solid buttons: no gold light bank / highlight gradients */
+.btn-lit::before, .btn-lit::after { display: none; }
