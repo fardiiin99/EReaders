@@ -14,6 +14,13 @@
      pen:     true | false | null (unknown → hidden)
      buttons: true if the device has physical page-turn buttons
      form:    illustration shape — 'slim' | 'buttons' | 'pen' | 'phone'
+     family:  optional — devices sharing a family are shown as versions of each other
+     variant: optional — short label for this device within its family
+     options: optional — extra choices shown as option cards, e.g.
+              { 'Colour': [{ label: 'Black', image: 'assets/x.jpg' }, { label: 'Jade' }],
+                'Storage': [{ label: '16 GB', price: 159.99 }, { label: '32 GB', price: 179.99 }] }
+              Storage sizes below are each model's base configuration — verify before launch.
+              Devices with unconfirmed storage (Scribe, Palma 3, Note Mini C, Note Air6 C) have none listed.
    ========================================================================= */
 (function (global) {
   'use strict';
@@ -26,24 +33,24 @@
 
   const PRODUCTS = [
     // ---- Kindle ----
-    { id: 'kindle', brand: 'kindle', name: 'Kindle', price: 109.99, status: 'available', screen: '6', colour: false, pen: false, buttons: false, form: 'slim', blurb: 'The compact, everyday Kindle for reading anywhere.' },
-    { id: 'kindle-paperwhite', brand: 'kindle', name: 'Kindle Paperwhite', price: 159.99, status: 'available', screen: '7', colour: false, pen: false, buttons: false, form: 'slim', blurb: 'A larger glare-free screen in a slim, waterproof design.' },
-    { id: 'kindle-paperwhite-se', brand: 'kindle', name: 'Kindle Paperwhite Signature Edition', price: 199.99, status: 'available', screen: '7', colour: false, pen: false, buttons: false, form: 'slim', blurb: 'Paperwhite with more storage, an auto-adjusting light, and wireless charging.' },
-    { id: 'kindle-colorsoft', brand: 'kindle', name: 'Kindle Colorsoft', price: 249.99, status: 'available', screen: '7', colour: true, pen: false, buttons: false, form: 'slim', blurb: 'Kindle reading with a colour display for covers, comics, and highlights.' },
-    { id: 'kindle-colorsoft-se', brand: 'kindle', name: 'Kindle Colorsoft Signature Edition', price: 279.99, status: 'available', screen: '7', colour: true, pen: false, buttons: false, form: 'slim', blurb: 'The colour Kindle with extra storage and wireless charging.' },
-    { id: 'kindle-scribe', brand: 'kindle', name: 'Kindle Scribe', price: 499.99, status: 'available', screen: '11', colour: false, pen: true, buttons: false, form: 'pen', blurb: 'A large-screen Kindle for reading and writing, with a pen included.' },
-    { id: 'kindle-scribe-colorsoft', brand: 'kindle', name: 'Kindle Scribe Colorsoft', price: 629.99, status: 'available', screen: '11', colour: true, pen: true, buttons: false, form: 'pen', blurb: 'Kindle Scribe with a colour display for notes, highlights, and sketches.' },
+    { id: 'kindle', brand: 'kindle', name: 'Kindle', price: 109.99, status: 'available', screen: '6', colour: false, pen: false, buttons: false, form: 'slim', options: { Storage: [{ label: '16 GB', price: 109.99 }] }, blurb: 'The compact, everyday Kindle for reading anywhere.' },
+    { id: 'kindle-paperwhite', family: 'paperwhite', variant: 'Standard', brand: 'kindle', name: 'Kindle Paperwhite', price: 159.99, status: 'available', screen: '7', colour: false, pen: false, buttons: false, form: 'slim', options: { Storage: [{ label: '16 GB', price: 159.99 }] }, blurb: 'A larger glare-free screen in a slim, waterproof design.' },
+    { id: 'kindle-paperwhite-se', family: 'paperwhite', variant: 'Signature Edition', brand: 'kindle', name: 'Kindle Paperwhite Signature Edition', price: 199.99, status: 'available', screen: '7', colour: false, pen: false, buttons: false, form: 'slim', options: { Storage: [{ label: '32 GB', price: 199.99 }] }, blurb: 'Paperwhite with more storage, an auto-adjusting light, and wireless charging.' },
+    { id: 'kindle-colorsoft', family: 'colorsoft', variant: 'Standard', brand: 'kindle', name: 'Kindle Colorsoft', price: 249.99, status: 'available', screen: '7', colour: true, pen: false, buttons: false, form: 'slim', options: { Storage: [{ label: '16 GB', price: 249.99 }] }, blurb: 'Kindle reading with a colour display for covers, comics, and highlights.' },
+    { id: 'kindle-colorsoft-se', family: 'colorsoft', variant: 'Signature Edition', brand: 'kindle', name: 'Kindle Colorsoft Signature Edition', price: 279.99, status: 'available', screen: '7', colour: true, pen: false, buttons: false, form: 'slim', options: { Storage: [{ label: '32 GB', price: 279.99 }] }, blurb: 'The colour Kindle with extra storage and wireless charging.' },
+    { id: 'kindle-scribe', family: 'scribe', variant: 'Black & white', brand: 'kindle', name: 'Kindle Scribe', price: 499.99, status: 'available', screen: '11', colour: false, pen: true, buttons: false, form: 'pen', blurb: 'A large-screen Kindle for reading and writing, with a pen included.' },
+    { id: 'kindle-scribe-colorsoft', family: 'scribe', variant: 'Colorsoft', brand: 'kindle', name: 'Kindle Scribe Colorsoft', price: 629.99, status: 'available', screen: '11', colour: true, pen: true, buttons: false, form: 'pen', blurb: 'Kindle Scribe with a colour display for notes, highlights, and sketches.' },
 
     // ---- Kobo ----
-    { id: 'kobo-clara-bw', brand: 'kobo', name: 'Kobo Clara BW', price: 159.99, status: 'available', screen: '6', colour: false, pen: false, buttons: false, form: 'slim', blurb: 'A light, waterproof 6-inch reader with a crisp black-and-white screen.' },
-    { id: 'kobo-clara-colour', brand: 'kobo', name: 'Kobo Clara Colour', price: 179.99, status: 'available', screen: '6', colour: true, pen: false, buttons: false, form: 'slim', blurb: 'A pocketable, waterproof reader with a colour E Ink screen.' },
-    { id: 'kobo-libra-colour', brand: 'kobo', name: 'Kobo Libra Colour', price: 259.99, status: 'available', screen: '7', colour: true, pen: true, buttons: true, form: 'buttons', blurb: 'Colour reading with page-turn buttons and support for a stylus.' },
-    { id: 'kobo-elipsa-2e', brand: 'kobo', name: 'Kobo Elipsa 2E', price: 399.99, status: 'available', screen: '10.3', colour: false, pen: true, buttons: false, form: 'pen', blurb: 'A large reading and note-taking device designed around its stylus.' },
+    { id: 'kobo-clara-bw', family: 'clara', variant: 'Black & white', brand: 'kobo', name: 'Kobo Clara BW', price: 159.99, status: 'available', screen: '6', colour: false, pen: false, buttons: false, form: 'slim', options: { Storage: [{ label: '16 GB', price: 159.99 }] }, blurb: 'A light, waterproof 6-inch reader with a crisp black-and-white screen.' },
+    { id: 'kobo-clara-colour', family: 'clara', variant: 'Colour', brand: 'kobo', name: 'Kobo Clara Colour', price: 179.99, status: 'available', screen: '6', colour: true, pen: false, buttons: false, form: 'slim', options: { Storage: [{ label: '16 GB', price: 179.99 }] }, blurb: 'A pocketable, waterproof reader with a colour E Ink screen.' },
+    { id: 'kobo-libra-colour', brand: 'kobo', name: 'Kobo Libra Colour', price: 259.99, status: 'available', screen: '7', colour: true, pen: true, buttons: true, form: 'buttons', options: { Storage: [{ label: '32 GB', price: 259.99 }] }, blurb: 'Colour reading with page-turn buttons and support for a stylus.' },
+    { id: 'kobo-elipsa-2e', brand: 'kobo', name: 'Kobo Elipsa 2E', price: 399.99, status: 'available', screen: '10.3', colour: false, pen: true, buttons: false, form: 'pen', options: { Storage: [{ label: '32 GB', price: 399.99 }] }, blurb: 'A large reading and note-taking device designed around its stylus.' },
 
     // ---- BOOX ----
-    { id: 'boox-go-6-gen2', brand: 'boox', name: 'BOOX Go 6 (Gen II)', price: 199.99, status: 'available', screen: '6', colour: false, pen: false, buttons: false, form: 'slim', blurb: 'A compact Android-based E Ink reader for books and apps.' },
-    { id: 'boox-go-7', brand: 'boox', name: 'BOOX Go 7', price: 249.99, status: 'available', screen: '7', colour: false, pen: false, buttons: true, form: 'buttons', blurb: 'A 7-inch reader with physical page-turn buttons.' },
-    { id: 'boox-go-color-7-gen2', brand: 'boox', name: 'BOOX Go Color 7 (Gen II)', price: 279.99, status: 'available', screen: '7', colour: true, pen: true, buttons: true, form: 'buttons', blurb: 'A 7-inch colour E Ink reader with page-turn buttons and stylus support.' },
+    { id: 'boox-go-6-gen2', brand: 'boox', name: 'BOOX Go 6 (Gen II)', price: 199.99, status: 'available', screen: '6', colour: false, pen: false, buttons: false, form: 'slim', options: { Storage: [{ label: '32 GB', price: 199.99 }] }, blurb: 'A compact Android-based E Ink reader for books and apps.' },
+    { id: 'boox-go-7', brand: 'boox', name: 'BOOX Go 7', price: 249.99, status: 'available', screen: '7', colour: false, pen: false, buttons: true, form: 'buttons', options: { Storage: [{ label: '64 GB', price: 249.99 }] }, blurb: 'A 7-inch reader with physical page-turn buttons.' },
+    { id: 'boox-go-color-7-gen2', brand: 'boox', name: 'BOOX Go Color 7 (Gen II)', price: 279.99, status: 'available', screen: '7', colour: true, pen: true, buttons: true, form: 'buttons', options: { Storage: [{ label: '64 GB', price: 279.99 }] }, blurb: 'A 7-inch colour E Ink reader with page-turn buttons and stylus support.' },
     { id: 'boox-palma-3', brand: 'boox', name: 'BOOX Palma 3', price: 339.99, status: 'coming-soon', screen: '6.13', colour: null, pen: null, buttons: false, form: 'phone', blurb: 'A phone-sized E Ink reader that fits in a pocket.' },
     { id: 'boox-note-mini-c', brand: 'boox', name: 'BOOX Note Mini C', price: 579.99, status: 'coming-soon', screen: '8.52', colour: true, pen: true, buttons: false, form: 'pen', blurb: 'A portable colour E Ink note-taker.' },
     { id: 'boox-note-air6-c', brand: 'boox', name: 'BOOX Note Air6 C', price: 579.99, status: 'available', screen: '10.3', colour: true, pen: true, buttons: false, form: 'pen', blurb: 'A 10.3-inch colour E Ink tablet for reading, notes, and documents.' }
