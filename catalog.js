@@ -21,9 +21,35 @@
                 'Storage': [{ label: '16 GB', price: 159.99 }, { label: '32 GB', price: 179.99 }] }
               Storage sizes below are each model's base configuration — verify before launch.
               Devices with unconfirmed storage (Scribe, Palma 3, Note Mini C, Note Air6 C) have none listed.
+     photos:  optional — extra product photos shown below the specifications, e.g.
+              ['assets/photos/kindle-paperwhite-1.jpg', 'assets/photos/kindle-paperwhite-2.jpg']
+              Until set, the page shows empty photo frames in their place.
    ========================================================================= */
 (function (global) {
   'use strict';
+
+  /* STORE CONTACT — shown under the product photos ("Also order from").
+     whatsapp: international number, digits only (e.g. '8801XXXXXXXXX')
+     phone:    number as dialled, e.g. '+8801XXXXXXXXX'
+     maps:     Google Maps link to the shop
+     Leave a value empty to show that button greyed out. */
+  const CONTACT = {
+    whatsapp: '8801811411811',
+    phone: '+8801811411811',
+    maps: 'https://maps.app.goo.gl/vXz8oHogEz2aisP98'
+  };
+
+  /* CARE PLANS — optional protection add-ons shown under the Buy buttons.
+     DRAFT: names, terms and prices below are placeholders. Replace with the shop's real plans before launch.
+       name:   plan name (bold)
+       detail: what it covers
+       years:  coverage length, shown as the green badge
+       rate:   price as a share of the device's list price (0.10 = 10%), or use price: 19.99 for a fixed price */
+  const CARE_PLANS = [
+    { id: 'care', name: 'EReaders Care', detail: 'Free repair for hardware faults for 365 days', years: 1, rate: 0.08 },
+    { id: 'screen', name: 'EReaders Screen Care', detail: 'One screen replacement for accidental cracks within 365 days', years: 1, rate: 0.12 },
+    { id: 'care-plus', name: 'EReaders Care+', detail: 'Hardware repair plus one screen replacement for 730 days', years: 2, rate: 0.18 }
+  ];
 
   const BRANDS = {
     kindle: { name: 'Kindle', store: 'https://www.amazon.com/' },
@@ -165,7 +191,7 @@
   }
 
   global.EReadersCatalog = {
-    BRANDS, PRODUCTS, byId, esc, money, formatPrice, specChips, displayLabel, yesNo, statusLabel,
+    CONTACT, CARE_PLANS, BRANDS, PRODUCTS, byId, esc, money, formatPrice, specChips, displayLabel, yesNo, statusLabel,
     MAX_COMPARE, loadCompare, saveCompare
   };
 })(window);
